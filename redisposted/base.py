@@ -1,3 +1,10 @@
+"""
+Base module for Redis message broker.
+
+This module provides an implementation of the `MsgBrokerBase` interface for Redis. It
+uses the `redis` package to interact with a Redis server.
+"""
+
 from functools import cached_property
 import threading
 from time import sleep
