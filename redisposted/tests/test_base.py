@@ -12,7 +12,12 @@ from pathlib import Path
 from time import sleep
 from posted import NoMsg
 from posted.tests.utils import service_is_running, start_service, stop_service
-from posted.tests.common import EXISTING_CHANNEL, gen_test_mk_msg_broker_args, base_test_on_demand_consumption, base_test_reactive_consumption
+from posted.tests.common import (
+    EXISTING_CHANNEL,
+    gen_test_mk_msg_broker_args,
+    base_test_on_demand_consumption,
+    base_test_reactive_consumption,
+)
 
 from redisposted.base import RedisBroker
 

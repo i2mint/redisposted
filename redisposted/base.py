@@ -35,8 +35,8 @@ class RedisBroker(MsgBrokerBase):
             pubsub.subscribe(channel)
             while not stop_event.is_set():
                 msg = pubsub.get_message()
-                if msg and msg["type"] == "message":
-                    decoded_msg = self._decoder(msg["data"])
+                if msg and msg['type'] == 'message':
+                    decoded_msg = self._decoder(msg['data'])
                     callback(decoded_msg)
                 sleep(0.01)
             pubsub.unsubscribe(channel)
@@ -54,7 +54,7 @@ class RedisBroker(MsgBrokerBase):
         for sub in self._subscriptions.get(channel, []):
             sub.set()
         self._subscriptions.pop(channel, None)
-    
+
     @cached_property
     def _redis(self):
         return Redis(**self._config)
