@@ -1,0 +1,4 @@
+redisposted.tests.test_base
+===========================
+.. automodule:: redisposted.tests.test_base
+   :members:

@@ -1,0 +1,4 @@
+redisposted.base
+================
+.. automodule:: redisposted.base
+   :members:
