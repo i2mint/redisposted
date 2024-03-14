@@ -21,7 +21,7 @@ from posted.tests.common import (
 
 from redisposted.base import RedisBroker
 
-SERVICE_CONTAINER_NAME = 'redisposted-test'
+SERVICE_CONTAINER_NAME = 'redisposted_test'
 DOCKER_COMPOSE_FILEPATH = Path(
     os.path.dirname(os.path.abspath(__file__)), 'docker-compose.yml'
 )
