@@ -53,14 +53,25 @@ def init_testing_data(broker: RedisBroker):
 
 
 @pytest.mark.parametrize(
-    'message, channel', list(gen_test_mk_msg_broker_args()),
+    'message, channel',
+    list(gen_test_mk_msg_broker_args()),
 )
 def test_on_demand_consumption(broker: RedisBroker, message, channel):
     base_test_on_demand_consumption(broker, message, channel)
 
 
 @pytest.mark.parametrize(
-    'message, channel', list(gen_test_mk_msg_broker_args()),
+    'message, channel',
+    list(gen_test_mk_msg_broker_args()),
 )
 def test_reactive_consumption(broker: RedisBroker, message, channel):
     base_test_reactive_consumption(broker, message, channel)
+
+
+def test_redis_broker_signature():
+    from i2 import Sig
+    from redisposted.base import MsgBrokerBase, Redis
+
+    # The signature of the `RedisBroker` class should be the signature of the base
+    # broker class, with the `Redis` arguments added to it.
+    assert set(Sig(RedisBroker)) == (set(Sig(MsgBrokerBase)) | set(Sig(Redis)))

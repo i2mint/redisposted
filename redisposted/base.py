@@ -11,12 +11,34 @@ from time import sleep
 from typing import Any, Callable
 from posted import MsgBrokerBase, NoMsg
 from redis import Redis
+from i2 import Sig
+
+# ----------------------------------------------------------------------------
+# Signature for the `RedisBroker` class
+
+broker_sig = Sig(MsgBrokerBase.__init__)  # signature of __init__ includes the self
+redis_sig = Sig(Redis)
+redis_posted_sig = broker_sig + redis_sig
+redis_posted_sig = redis_posted_sig.ch_kinds(
+    **{  # here, we change all arguments (but self and kwargs) to be keyword-only
+        name: Sig.KEYWORD_ONLY
+        for name in redis_posted_sig.names
+        if name not in {'self', 'kwargs'}
+    }
+)
+
+# ----------------------------------------------------------------------------
+# Redis message broker
 
 
 class RedisBroker(MsgBrokerBase):
     """
     Message broker for Redis.
     """
+
+    @redis_posted_sig
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def write(self, channel: str, message: Any):
         encoded_msg = self._encoder(message)
