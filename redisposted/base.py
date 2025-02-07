@@ -59,13 +59,13 @@ class RedisBroker(MsgBrokerBase):
                 msg = pubsub.get_message()
                 if msg and msg['type'] == 'message':
                     decoded_msg = self._decoder(msg['data'])
-                    callback(decoded_msg)
+                    threading.Thread(target=callback, args=(decoded_msg,)).start()
                 sleep(0.01)
             pubsub.unsubscribe(channel)
 
         msg = self.read(channel)
         while msg != NoMsg:
-            callback(msg)
+            threading.Thread(target=callback, args=(msg,)).start()
             msg = self.read(channel)
 
         stop_event = threading.Event()
