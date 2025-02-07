@@ -2,7 +2,7 @@
 Test cases for the redisBroker class.
 
 The tests are run against a redis broker running in a Docker container. If the container
-is not running, it will be started before the running the test and stopped after the 
+is not running, it will be started before the running the test and stopped after the
 tests are done.
 """
 
@@ -21,13 +21,13 @@ from posted.tests.common import (
 
 from redisposted.base import RedisBroker
 
-SERVICE_CONTAINER_NAME = 'redisposted_test'
+SERVICE_CONTAINER_NAME = "redisposted_test"
 DOCKER_COMPOSE_FILEPATH = Path(
-    os.path.dirname(os.path.abspath(__file__)), 'docker-compose.yml'
+    os.path.dirname(os.path.abspath(__file__)), "docker-compose.yml"
 )
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def ensure_service_is_running():
     if service_is_running(SERVICE_CONTAINER_NAME):
         yield
@@ -39,9 +39,9 @@ def ensure_service_is_running():
             stop_service(SERVICE_CONTAINER_NAME, DOCKER_COMPOSE_FILEPATH)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def broker():
-    return RedisBroker(host='localhost', port=6379, db=0)
+    return RedisBroker(host="localhost", port=6379, db=0)
 
 
 @pytest.fixture(autouse=True)
@@ -53,7 +53,7 @@ def init_testing_data(broker: RedisBroker):
 
 
 @pytest.mark.parametrize(
-    'message, channel',
+    "message, channel",
     list(gen_test_mk_msg_broker_args()),
 )
 def test_on_demand_consumption(broker: RedisBroker, message, channel):
@@ -61,7 +61,7 @@ def test_on_demand_consumption(broker: RedisBroker, message, channel):
 
 
 @pytest.mark.parametrize(
-    'message, channel',
+    "message, channel",
     list(gen_test_mk_msg_broker_args()),
 )
 def test_reactive_consumption(broker: RedisBroker, message, channel):

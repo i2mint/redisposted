@@ -23,7 +23,7 @@ redis_posted_sig = redis_posted_sig.ch_kinds(
     **{  # here, we change all arguments (but self and kwargs) to be keyword-only
         name: Sig.KEYWORD_ONLY
         for name in redis_posted_sig.names
-        if name not in {'self', 'kwargs'}
+        if name not in {"self", "kwargs"}
     }
 )
 
@@ -57,8 +57,8 @@ class RedisBroker(MsgBrokerBase):
             pubsub.subscribe(channel)
             while not stop_event.is_set():
                 msg = pubsub.get_message()
-                if msg and msg['type'] == 'message':
-                    decoded_msg = self._decoder(msg['data'])
+                if msg and msg["type"] == "message":
+                    decoded_msg = self._decoder(msg["data"])
                     threading.Thread(target=callback, args=(decoded_msg,)).start()
                 sleep(0.01)
             pubsub.unsubscribe(channel)
