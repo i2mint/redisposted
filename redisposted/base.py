@@ -8,7 +8,8 @@ uses the `redis` package to interact with a Redis server.
 from functools import cached_property
 import threading
 from time import sleep
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 from posted import MsgBrokerBase, NoMsg
 from redis import Redis
 from i2 import Sig
