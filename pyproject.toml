@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "redisposted"
-version = "0.1.4"
+version = "0.1.5"
 description = "Concrete implementation of posted (message-broker interface) for Redis"
 readme = "README.md"
 requires-python = ">=3.10"
