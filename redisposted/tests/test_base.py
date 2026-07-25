@@ -1,55 +1,41 @@
 """
-Test cases for the redisBroker class.
+Test cases for the ``RedisBroker`` class.
 
-The tests are run against a redis broker running in a Docker container. If the container
-is not running, it will be started before the running the test and stopped after the
-tests are done.
+These tests run against a live Redis server reachable at
+``REDISPOSTED_REDIS_HOST``:``REDISPOSTED_REDIS_PORT`` (default
+``localhost:6379``, db ``REDISPOSTED_REDIS_DB`` = ``0``). In CI the server is
+provided by a ``services: redis`` container; locally, any reachable Redis works
+(e.g. ``docker run -p 6379:6379 redis:7`` or a native install). When no Redis is
+reachable, the Redis-dependent tests are *deselected* by ``conftest.py`` so the
+suite stays green; the signature test, which needs no server, always runs.
 """
 
 import os
 import pytest
-from pathlib import Path
-from time import sleep
-from posted import NoMsg
-from posted.tests.utils import service_is_running, start_service, stop_service
+
+from redisposted.base import RedisBroker
 from posted.tests.common import (
-    EXISTING_CHANNEL,
     gen_test_mk_msg_broker_args,
     base_test_on_demand_consumption,
     base_test_reactive_consumption,
 )
 
-from redisposted.base import RedisBroker
-
-SERVICE_CONTAINER_NAME = "redisposted_test"
-DOCKER_COMPOSE_FILEPATH = Path(
-    os.path.dirname(os.path.abspath(__file__)), "docker-compose.yml"
-)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def ensure_service_is_running():
-    if service_is_running(SERVICE_CONTAINER_NAME):
-        yield
-    else:
-        start_service(SERVICE_CONTAINER_NAME, DOCKER_COMPOSE_FILEPATH)
-        try:
-            yield
-        finally:
-            stop_service(SERVICE_CONTAINER_NAME, DOCKER_COMPOSE_FILEPATH)
+REDIS_HOST = os.environ.get("REDISPOSTED_REDIS_HOST", "localhost")
+REDIS_PORT = int(os.environ.get("REDISPOSTED_REDIS_PORT", "6379"))
+REDIS_DB = int(os.environ.get("REDISPOSTED_REDIS_DB", "0"))
 
 
 @pytest.fixture(scope="module")
 def broker():
-    return RedisBroker(host="localhost", port=6379, db=0)
+    return RedisBroker(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
 
 
 @pytest.fixture(autouse=True)
-def init_testing_data(broker: RedisBroker):
-    broker._redis.flushdb()
-    # broker.write(EXISTING_CHANNEL, '')
-    # broker.read(EXISTING_CHANNEL)
-    # sleep(0.5)
+def init_testing_data(request):
+    # Only touch Redis for tests that actually use the ``broker`` fixture, so
+    # server-free tests (e.g. the signature test) don't require a live Redis.
+    if "broker" in request.fixturenames:
+        request.getfixturevalue("broker")._redis.flushdb()
 
 
 @pytest.mark.parametrize(
